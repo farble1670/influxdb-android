@@ -29,26 +29,26 @@ public class InfluxDbConfig extends XmlResourceParser {
   }
 
   String getDbName() {
-    return strings.get("db_name");
+    return getString("db_name", null);
   }
 
   String getUrl() {
-    return strings.get("url");
+    return getString("url", null);
   }
 
   String getUser() {
-    return strings.get("user");
+    return getString("user", null);
   }
 
   String getPassword() {
-    return strings.get("password");
+    return getString("password", null);
   }
 
   int getWriteBatchSize() {
-    if (integers.containsKey("write_batch_size")) {
-      return integers.get("write_batch_size");
-    }
-    return context.getResources().getInteger(R.integer.default_write_batch_size);
+    return getInt("write_batch_size", context.getResources().getInteger(R.integer.default_write_batch_size));
   }
 
+  int getMaxWriteDelay() {
+    return getInt("max_write_delay", context.getResources().getInteger(R.integer.default_max_write_delay));
+  }
 }

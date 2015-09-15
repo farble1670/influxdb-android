@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <integer name="default_write_batch_size">100</integer>
+  <integer name="default_max_write_delay">300</integer>
 </resources>

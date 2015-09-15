@@ -30,6 +30,7 @@ public abstract class InfluxDbContract {
     public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/point";
 
     static Uri getUri(Context context) {
+      // TODO: either get from provider, or from app meta-data
       return Uri.withAppendedPath(Uri.parse("content://" + getAuthority(context)), InfluxDbContract.Points.CONTENT_DIRECTORY);
     }
 

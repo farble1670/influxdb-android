@@ -16,6 +16,11 @@ public class InfluxDb {
     this.uri = InfluxDbContract.Points.getUri(context);
   }
 
+  /**
+   * Queue a write.
+   * <p/>
+   * Should be called asynchronously as this performs a content provider insert.
+   */
   public void write(Point... points) {
     ContentValues[] values = new ContentValues[points.length];
     for (int i = 0; i < points.length; i++) {
