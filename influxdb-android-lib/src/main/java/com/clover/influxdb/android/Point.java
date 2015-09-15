@@ -256,6 +256,8 @@ public class Point {
       if (value instanceof String) {
         String stringValue = (String) value;
         sb.append("\"").append(FIELD_ESCAPER.escape(stringValue)).append("\"");
+      } else if (value instanceof Integer) {
+        sb.append(numberFormat.format(value)).append("i");
       } else if (value instanceof Number) {
         sb.append(numberFormat.format(value));
       } else {
