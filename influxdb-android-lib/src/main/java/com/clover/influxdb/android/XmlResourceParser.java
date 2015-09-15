@@ -19,7 +19,7 @@ public class XmlResourceParser {
     this.context = context;
   }
 
-  public void parse(int id) throws XmlPullParserException, IOException {
+  public XmlResourceParser parse(int id) throws XmlPullParserException, IOException {
     XmlPullParser xpp = context.getResources().getXml(id);
     int eventType = xpp.getEventType();
 
@@ -31,12 +31,16 @@ public class XmlResourceParser {
           strings.put(xpp.getAttributeValue(null, "name"), xpp.nextText());
         } else if ("integer".equals(tag)) {
           integers.put(xpp.getAttributeValue(null, "name"), Integer.valueOf(xpp.nextText()));
+        } else if ("boolean".equals(tag)) {
+          booleans.put(xpp.getAttributeValue(null, "name"), Boolean.valueOf(xpp.nextText()));
         }
       } else if (eventType == XmlPullParser.END_TAG) {
       } else if (eventType == XmlPullParser.TEXT) {
       }
       eventType = xpp.next();
     }
+
+    return this;
   }
 
   public String getString(String key, String def) {
