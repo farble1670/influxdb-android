@@ -69,4 +69,9 @@ db.write(p);
 
 ## Why not influxdb-java?
 
-influxdb-java is a pure Java SDK for InfluxDB and can of course be used on Android. It didn't work for me, since it does not ensure reliable delivery, and has no way to integrate network connectivity awareness into the SDK. On mobile, that's expecially important as you don't want code banging on the network wasting battery when you know it's going to fail.
+influxdb-java is a pure Java SDK for InfluxDB and can of course be used on Android.
+https://github.com/influxdb/influxdb-java
+
+It didn't work for me, since it does not ensure reliable delivery, and has no way to integrate network connectivity awareness into the SDK. On mobile, that's expecially important as you don't want code banging on the network wasting battery when you know it's going to fail.
+
+It also has extremely large transitive dependencies, including Guava and OkHttp. This is a real problem on Android where we are limited to 64k methods (unless we use multi-DEX, which is a problem in itself). 
