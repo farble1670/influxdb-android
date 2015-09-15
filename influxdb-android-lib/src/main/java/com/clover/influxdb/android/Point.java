@@ -16,6 +16,11 @@ import java.util.concurrent.TimeUnit;
  * Representation of a InfluxDB database Point.
  *
  * @author stefan.majer [at] gmail.com
+ *
+ * NOTE: this class was taken from:
+ * https://github.com/influxdb/influxdb-java
+ *
+ * and modified for use in this project. All credit to the original author.
  */
 public class Point {
   private String measurement;
