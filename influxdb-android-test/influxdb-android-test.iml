@@ -85,7 +85,8 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 19 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="guava-19.0-rc1" level="project" />
+    <orderEntry type="library" exported="" name="seeds-base-16.0.1" level="project" />
+    <orderEntry type="library" exported="" name="seeds-escape-16.0.1" level="project" />
     <orderEntry type="module" module-name="influxdb-android-lib" exported="" />
   </component>
 </module>

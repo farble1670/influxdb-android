@@ -1,16 +1,15 @@
 package com.clover.influxdb.android;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Ordering;
-import com.google.common.escape.Escaper;
-import com.google.common.escape.Escapers;
+import android.text.TextUtils;
+import net.tribe7.common.base.Preconditions;
+import net.tribe7.common.escape.Escaper;
+import net.tribe7.common.escape.Escapers;
 
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -49,10 +48,10 @@ public class Point {
    */
   public static final class Builder {
     private final String measurement;
-    private final Map<String, String> tags = Maps.newTreeMap(Ordering.natural());
+    private final Map<String, String> tags = new TreeMap<String, String>();
     private Long time;
     private TimeUnit precision = TimeUnit.NANOSECONDS;
-    private final Map<String, Object> fields = Maps.newTreeMap(Ordering.natural());
+    private final Map<String, Object> fields = new TreeMap<String, Object>();
 
     /**
      * @param measurement
@@ -128,7 +127,7 @@ public class Point {
      */
     public Point build() {
       Preconditions
-          .checkArgument(!Strings.isNullOrEmpty(this.measurement), "Point name must not be null or empty.");
+          .checkArgument(!TextUtils.isEmpty(this.measurement), "Point name must not be null or empty.");
       Preconditions.checkArgument(this.fields.size() > 0, "Point must have at least one field specified.");
       Point point = new Point();
       point.setFields(this.fields);
