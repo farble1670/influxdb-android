@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -18,6 +17,7 @@ public class WriteService extends IntentService {
   private static final String PREF_LAST_WRITE = WriteService.class.getName() + ".lastWrite";
 
   private SharedPreferences prefs;
+  private InfluxDbDatabase database;
 
   public WriteService() {
     super(WriteService.class.getName());
@@ -28,6 +28,7 @@ public class WriteService extends IntentService {
     super.onCreate();
 
     this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    this.database = new InfluxDbDatabase(this);
   }
 
   @Override
@@ -37,7 +38,6 @@ public class WriteService extends IntentService {
       return;
     }
 
-    Uri uri = InfluxDbContract.Points.getUri(this);
     InfluxDbService service = new InfluxDbService(this);
     InfluxDbConfig config = null;
     try {
@@ -48,7 +48,11 @@ public class WriteService extends IntentService {
     }
 
     long now = System.currentTimeMillis();
-    long lastWrite = prefs.getLong(PREF_LAST_WRITE, System.currentTimeMillis());
+    long lastWrite = prefs.getLong(PREF_LAST_WRITE, -1);
+    if (lastWrite == 1) {
+      lastWrite = System.currentTimeMillis();
+      prefs.edit().putLong(PREF_LAST_WRITE, lastWrite).apply();
+    }
     long maxWriteDelay = config.getMaxWriteDelay() * 1000;
 
     boolean maxWriteDelayExceeded = lastWrite + maxWriteDelay <= now;
@@ -59,7 +63,7 @@ public class WriteService extends IntentService {
     while (true) {
       Cursor c = null;
       try {
-        c = getContentResolver().query(uri, null, null, null, "_id ASC LIMIT " + config.getWriteBatchSize());
+        c = database.query(null, null, null, "_id ASC LIMIT " + config.getWriteBatchSize());
         if (c == null || !c.moveToFirst()) {
           Log.i(InfluxDb.TAG, "no (more) points, aborting");
           break;
@@ -96,7 +100,7 @@ public class WriteService extends IntentService {
 
         Log.i(InfluxDb.TAG, "writing line protocols ...");
         if (service.write(lineProtocols)) {
-          getContentResolver().delete(uri, InfluxDbContract.Points._ID + "<=" + maxId, null);
+          database.delete(InfluxDbContract.Points._ID + "<=" + maxId, null);
           prefs.edit().putLong(PREF_LAST_WRITE, now).apply();
           WriteReceiver.cancel(this);
           Log.i(InfluxDb.TAG, "done writing line protocols");
@@ -108,21 +112,6 @@ public class WriteService extends IntentService {
         if (c != null) {
           c.close();
         }
-      }
-    }
-  }
-
-  private int getCount() {
-    Cursor c = null;
-    try {
-      c = getContentResolver().query(InfluxDbContract.Points.getUri(this), new String[]{"count(*) AS count"}, null, null, null);
-      if (c == null || !c.moveToFirst()) {
-        return 0;
-      }
-      return c.getInt(0);
-    } finally {
-      if (c != null) {
-        c.close();
       }
     }
   }

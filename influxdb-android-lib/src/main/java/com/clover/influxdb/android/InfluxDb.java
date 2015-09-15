@@ -3,23 +3,22 @@ package com.clover.influxdb.android;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 
 public class InfluxDb {
   static final String TAG = "influxdb-android";
 
   private final Context context;
-  private final Uri uri;
+  private final InfluxDbDatabase database;
 
   public InfluxDb(Context context) {
     this.context = context;
-    this.uri = InfluxDbContract.Points.getUri(context);
+    this.database = new InfluxDbDatabase(context);
   }
 
   /**
    * Queue a write.
    * <p/>
-   * Should be called asynchronously as this performs a content provider insert.
+   * Should be called asynchronously as this performs a database insert.
    */
   public void write(Point... points) {
     ContentValues[] values = new ContentValues[points.length];
@@ -29,7 +28,11 @@ public class InfluxDb {
       values[i] = v;
     }
 
-    context.getContentResolver().bulkInsert(uri, values);
+    database.bulkInsert(values);
     context.startService(new Intent(context, WriteService.class));
+  }
+
+  public void shutdown() {
+    database.shutdown();
   }
 }

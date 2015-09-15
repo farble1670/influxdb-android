@@ -17,12 +17,6 @@
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
-
-    <provider
-        android:authorities="com.clover.influxdb.android.text"
-        android:name="com.clover.influxdb.android.InfluxDbProvider"
-        android:exported="false"/>
-
   </application>
 
 </manifest>
