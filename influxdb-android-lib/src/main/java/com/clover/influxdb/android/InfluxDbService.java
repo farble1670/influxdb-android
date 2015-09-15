@@ -43,16 +43,16 @@ public class InfluxDbService {
       Log.i(InfluxDb.TAG, "write response, status: " + responseCode);
       if (responseCode == HttpStatus.SC_NO_CONTENT) {
         success = true;
-      }
+      } else {
+        reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String inputLine;
+        StringBuilder response = new StringBuilder();
 
-      reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-      String inputLine;
-      StringBuilder response = new StringBuilder();
-
-      while ((inputLine = reader.readLine()) != null) {
-        response.append(inputLine);
+        while ((inputLine = reader.readLine()) != null) {
+          response.append(inputLine);
+        }
+        Log.i(InfluxDb.TAG, "write response, content: " + response.toString());
       }
-      Log.i(InfluxDb.TAG, "write response, content: " + response.toString());
     } catch (Exception e) {
       e.printStackTrace();
     } finally {
