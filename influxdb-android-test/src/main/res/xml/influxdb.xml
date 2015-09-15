@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="db_name">metrics</string>
+  <string name="url">http://metrics1.dev.clover.com</string>
+  <string name="user">test</string>
+  <string name="password">test123</string>
+  <integer name="write_batch_size">1</integer>
+</resources>
