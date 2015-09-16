@@ -58,6 +58,8 @@ Point p = Point.measurement("test2")
 db.write(p);
 ```
 
+Since `InfluxDb.write()` performs a database operation, it should not be called on the UI thread (run it in an `AsyncTask`).
+
 ## Why not influxdb-java?
 
 influxdb-java is a pure Java SDK for InfluxDB and can of course be used on Android.
