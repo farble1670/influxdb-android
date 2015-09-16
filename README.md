@@ -23,15 +23,15 @@ You must provide a config file named `influxdb.xml` in `res/xml`. E.g.,
   <!--
   REQUIRED: Influx DB URL.
   -->
-  <string name="url">http://metrics1.dev.clover.com</string>
+  <string name="url">http://influxdb.test.com</string>
   <!--
   REQUIRED: Influx DB user name.
   -->
-  <string name="user">test</string>
+  <string name="user">testuser</string>
   <!--
   REQUIRED: Influx DB password.
   -->
-  <string name="password">test123</string>
+  <string name="password">testpassword</string>
   <!--
   OPTIONAL: Will wait until this many measurements are queued before sending,
   except when max write delay is exceeded (see below). Default value is 100.
