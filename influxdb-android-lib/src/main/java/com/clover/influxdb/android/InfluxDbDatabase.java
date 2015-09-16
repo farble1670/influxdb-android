@@ -106,6 +106,9 @@ public class InfluxDbDatabase  {
       db.endTransaction();
     }
 
+
+    trim();
+    
     return rowId;
   }
 
