@@ -44,3 +44,42 @@ dependencies {
   compile fileTree(dir: 'libs', include: ['*.jar'])
   compile 'net.tribe7.seeds:seeds-escape:16.0.1'
 }
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      repository(url: "http://bulldog.corp.clover.com:8081/artifactory/libs-release-local") {
+        authentication(userName: "${artifactory_user}", password: "${artifactory_password}")
+      }
+      snapshotRepository(url: "http://bulldog.corp.clover.com:8081/artifactory/libs-snapshot-local") {
+        authentication(userName: "${artifactory_user}", password: "${artifactory_password}")
+      }
+      pom.project {
+        name 'InfluxDB Android library'
+        description 'InfluxDB Android library'
+        url 'http://www.clover.com/'
+
+        licenses {
+          license {
+            name 'The Apache Software License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0'
+            distribution 'repo'
+          }
+        }
+
+        scm {
+          url "https://github.com/farble1670/influxdb-android"
+          connection "https://github.com/farble1670/influxdb-android.git"
+          developerConnection "git@github.com:farble1670/influxdb-android.git"
+        }
+
+        developers {
+          developer {
+            name 'Clover Engineering Team / Jeffrey Blattman'
+            url 'https://www.clover.com/team'
+          }
+        }
+      }
+    }
+  }
+}
