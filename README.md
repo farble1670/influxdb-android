@@ -1,26 +1,17 @@
 # influxdb-android
 InfluxDB SDK for Android OS. This is a WIP. This library saves points and sends them efficiently in batches, considering network connectivity.
 
-This is an Android AAR library. It is not currently published to Maven Central or any other repository. To use it, build it locally using gradle, and copy the resulting .aar file to your `libs/` folder. 
+This is an Android AAR library. It is not currently published to Maven Central or any other repository. To use it, install it locally using gradle (`gradle install`), and and reference it from your dependencies. 
 
 ```
 dependencies {
-  compile files('libs/influxdb-android-lib-debug.aar')
+  compile 'com.clover.influxdb.android:influxdb-android-lib:1-SNAPSHOT'
 }
 ```
 
-This library is for data collection only, and hence only supports /write. To use the library, you must define the content provider it uses for saving points in your manifest,
+This library is for data collection only, and hence only supports /write.\
 
-```
-    <provider
-        android:authorities="com.clover.influxdb.android.test"
-        android:name="com.clover.influxdb.android.InfluxDbProvider"
-        android:exported="false"/>
-```
-
-The authority can be whatever you like but should be namespaced with your app's package. 
-
-You must also provide a config file named `influxdb.xml` in `res/xml`. E.g.,
+You must provide a config file named `influxdb.xml` in `res/xml`. E.g.,
 
 ```
 <?xml version="1.0" encoding="utf-8"?>
