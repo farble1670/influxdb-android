@@ -53,9 +53,12 @@ public class WriteService extends IntentService {
       lastWrite = System.currentTimeMillis();
       prefs.edit().putLong(PREF_LAST_WRITE, lastWrite).apply();
     }
-    long maxWriteDelay = config.getMaxWriteDelay() * 1000;
 
-    boolean maxWriteDelayExceeded = lastWrite + maxWriteDelay <= now;
+    long writeAtLeastEvery = config.getWriteAtMostEvery() * 1000;
+    boolean writeAtLeast = lastWrite + writeAtLeastEvery > now;
+
+    long writeAtMostEvery = config.getWriteAtLeastEvery() * 1000;
+    boolean writeAtMost = lastWrite + writeAtMostEvery <= now;
 
     // proceeding with an attempted write, so cancel any scheduled operations
     WriteReceiver.cancel(this);
@@ -70,15 +73,24 @@ public class WriteService extends IntentService {
         }
         Log.i(InfluxDb.TAG, "processing points, count: " + c.getCount());
 
-        if (maxWriteDelayExceeded) {
-          Log.i(InfluxDb.TAG, "max write delay exceeded, ignoring batch size");
+        if (writeAtMost) {
+          Log.i(InfluxDb.TAG, "write at most exceeded, ignoring batch size");
+        } else if (writeAtLeast) {
+          Log.i(InfluxDb.TAG, "below write at least, aborting");
+
+          // schedule a retry when max write delay is expected to be expired
+          long delay = (lastWrite + writeAtLeastEvery) - now;
+          Log.i(InfluxDb.TAG, String.format("scheduling retry in ~%dms", delay));
+          WriteReceiver.schedule(this, delay);
+
+          break;
         } else {
           Log.i(InfluxDb.TAG, "max write delay not exceeded, checking batch size ...");
           if (c.getCount() < config.getWriteBatchSize()) {
             Log.i(InfluxDb.TAG, "count < batch size, aborting");
 
             // schedule a retry when max write delay is expected to be expired
-            long delay = (lastWrite + maxWriteDelay) - now;
+            long delay = (lastWrite + writeAtMostEvery) - now;
             Log.i(InfluxDb.TAG, String.format("scheduling retry in ~%dms", delay));
             WriteReceiver.schedule(this, delay);
 
@@ -114,6 +126,15 @@ public class WriteService extends IntentService {
         }
       }
     }
+  }
+
+  @Override
+  public void onDestroy() {
+    if (database != null) {
+      database.shutdown();
+      database = null;
+    }
+    super.onDestroy();
   }
 
   static boolean isNetworkConnected(Context context) {

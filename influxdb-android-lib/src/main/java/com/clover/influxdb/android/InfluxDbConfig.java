@@ -48,7 +48,11 @@ public class InfluxDbConfig extends XmlResourceParser {
     return getInt("write_batch_size", context.getResources().getInteger(R.integer.default_write_batch_size));
   }
 
-  int getMaxWriteDelay() {
-    return getInt("max_write_delay", context.getResources().getInteger(R.integer.default_max_write_delay));
+  int getWriteAtLeastEvery() {
+    return getInt("write_at_least_every", context.getResources().getInteger(R.integer.default_write_at_least_every));
+  }
+
+  int getWriteAtMostEvery() {
+    return getInt("write_at_most_every", context.getResources().getInteger(R.integer.default_write_at_most_every));
   }
 }

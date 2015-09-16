@@ -1,5 +1,5 @@
 group = 'com.clover.influxdb.android'
-version = '1-SNAPSHOT'
+version = '2-SNAPSHOT'
 
 buildscript {
   repositories {
