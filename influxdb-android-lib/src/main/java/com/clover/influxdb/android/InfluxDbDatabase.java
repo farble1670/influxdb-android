@@ -60,7 +60,7 @@ public class InfluxDbDatabase  {
 
   private final Context context;
 
-  public InfluxDbDatabase(Context context) {
+  InfluxDbDatabase(Context context) {
     this.context = context;
 
     projection.put(InfluxDbContract.Points._ID, InfluxDbContract.Points._ID);

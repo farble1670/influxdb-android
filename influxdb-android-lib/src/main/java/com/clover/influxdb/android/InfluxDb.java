@@ -7,10 +7,20 @@ import android.content.Intent;
 public class InfluxDb {
   static final String TAG = "influxdb-android";
 
-  private final Context context;
-  private final InfluxDbDatabase database;
+  static InfluxDb instance = null;
 
-  public InfluxDb(Context context) {
+  private final Context context;
+
+  final InfluxDbDatabase database;
+
+  public static synchronized InfluxDb instance(Context context) {
+    if (instance == null) {
+      instance = new InfluxDb(context.getApplicationContext());
+    }
+    return instance;
+  }
+
+  private InfluxDb(Context context) {
     this.context = context;
     this.database = new InfluxDbDatabase(context);
   }
@@ -30,9 +40,5 @@ public class InfluxDb {
 
     database.bulkInsert(values);
     context.startService(new Intent(context, WriteService.class));
-  }
-
-  public void shutdown() {
-    database.shutdown();
   }
 }

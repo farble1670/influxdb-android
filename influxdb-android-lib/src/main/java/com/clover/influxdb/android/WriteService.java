@@ -17,7 +17,6 @@ public class WriteService extends IntentService {
   private static final String PREF_LAST_WRITE = WriteService.class.getName() + ".lastWrite";
 
   private SharedPreferences prefs;
-  private InfluxDbDatabase database;
 
   public WriteService() {
     super(WriteService.class.getName());
@@ -26,9 +25,7 @@ public class WriteService extends IntentService {
   @Override
   public void onCreate() {
     super.onCreate();
-
     this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
-    this.database = new InfluxDbDatabase(this);
   }
 
   @Override
@@ -66,7 +63,7 @@ public class WriteService extends IntentService {
     while (true) {
       Cursor c = null;
       try {
-        c = database.query(null, null, null, "_id ASC LIMIT " + config.getWriteBatchSize());
+        c = InfluxDb.instance(this).database.query(null, null, null, "_id ASC LIMIT " + config.getWriteBatchSize());
         if (c == null || !c.moveToFirst()) {
           Log.i(InfluxDb.TAG, "no (more) points, aborting");
           break;
@@ -112,7 +109,7 @@ public class WriteService extends IntentService {
 
         Log.i(InfluxDb.TAG, "writing line protocols ...");
         if (service.write(lineProtocols)) {
-          database.delete(InfluxDbContract.Points._ID + "<=" + maxId, null);
+          InfluxDb.instance(this).database.delete(InfluxDbContract.Points._ID + "<=" + maxId, null);
           prefs.edit().putLong(PREF_LAST_WRITE, now).apply();
           WriteReceiver.cancel(this);
           Log.i(InfluxDb.TAG, "done writing line protocols");
@@ -126,15 +123,6 @@ public class WriteService extends IntentService {
         }
       }
     }
-  }
-
-  @Override
-  public void onDestroy() {
-    if (database != null) {
-      database.shutdown();
-      database = null;
-    }
-    super.onDestroy();
   }
 
   static boolean isNetworkConnected(Context context) {

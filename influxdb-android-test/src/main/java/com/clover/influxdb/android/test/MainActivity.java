@@ -16,7 +16,6 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends Activity {
   static double value = 0;
 
-  private InfluxDb influxDb;
 
   private Button writePointButton;
 
@@ -35,17 +34,9 @@ public class MainActivity extends Activity {
             .field("sine", Math.sin(value++))
             .time(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
             .build();
-        influxDb.write(p);
+        InfluxDb.instance(MainActivity.this).write(p);
       }
     });
-    influxDb = new InfluxDb(this);
-  }
-
-
-  @Override
-  protected void onDestroy() {
-    influxDb.shutdown();
-    super.onDestroy();
   }
 
   @Override

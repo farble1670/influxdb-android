@@ -10,7 +10,7 @@ public class InfluxDbConfig extends XmlResourceParser {
 
   static synchronized InfluxDbConfig instance(Context context) throws IOException, XmlPullParserException {
     if (instance == null) {
-      instance = new InfluxDbConfig(context);
+      instance = new InfluxDbConfig(context.getApplicationContext());
       instance.parse();
     }
     return instance;
