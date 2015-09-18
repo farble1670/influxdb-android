@@ -38,10 +38,15 @@ You must provide a config file named `influxdb.xml` in `res/xml`. E.g.,
   -->
   <integer name="write_batch_size">10</integer>
   <!--
-  OPTIONAL: Maximum delay between writes, in seconds, irrespective of batch size.
+  OPTIONAL: Send values to server at least every this number of seconds, irrespective of batch size.
   Default value is 300 (5 minutes).
   -->
-  <integer name="max_write_delay">30</integer>
+  <integer name="write_at_least_every">60</integer>
+  <!--
+  OPTIONAL: Send values to server at most every this number of seconds, irrespective of batch size.
+  Default value is 20.
+  -->
+  <integer name="write_at_most_every">30</integer>
 </resources>
 ```
 
@@ -59,6 +64,16 @@ db.write(p);
 ```
 
 Since `InfluxDb.write()` performs a database operation, it should not be called on the UI thread (run it in an `AsyncTask`).
+
+## Write Configuration
+
+The three write configuration settings, `write_batch_size`, `write_at_least_every`, and `write_at_most_every` need some explanation. These all control when queued measurements will be sent to the server. If the time since the last send is below `write_at_most_every`, then no data will be sent regardless of the number of queued points. This is to keep an app that generates many points from calling the server very frequently. If the time since the last send is above `write_at_least_every`, then points will be sent to the server, regardless of the number of queued points. This is to ensure that all points will be sent to the server in a timely manner. If neither of those apply, and the number of queued measurements is over `write_batch_size`, then the points will be sent to the server, otherwise, they will not.
+
+### Batching 
+
+In short, disregarding `write_at_least_every` and `write_at_most_every`, we only send things in batches of `write_batch_size`.
+
+Disregarding `write_at_least_every` and `write_at_most_every` the SDK will get up to the oldest `write_batch_size` points from the DB. If the count is below `write_batch_size`, no points are sent. If it's equal, those points are sent, and up to the next `write_batch_size` measurements are fetched from the DB. Again, the same check is performed. The points are only sent if the count is equal to `write_batch_size`. 
 
 ## Why not influxdb-java?
 
