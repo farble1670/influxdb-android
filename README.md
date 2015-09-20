@@ -1,5 +1,5 @@
 # influxdb-android
-InfluxDB SDK for Android OS. This is a WIP. This library saves points and sends them efficiently in batches, considering network connectivity. This library is for data collection only, and hence only supports /write.\
+InfluxDB SDK for Android OS. This is a WIP. This SDK saves measurements and sends them efficiently in batches, considering network connectivity and other factors (described below). This library is for data collection only, and hence only supports `/write`.
 
 This is an Android AAR library, not a JAR. You must use the Gradle build system to include an AAR. It is not currently published to Maven Central or any other repository. To use it, install it locally using gradle (`gradle install`), and and reference it from your dependencies.
 
@@ -65,7 +65,7 @@ Since `InfluxDb.write()` performs a database operation, it should not be called 
 
 ## Write Configuration
 
-The three write configuration settings, `write_batch_size`, `write_at_least_every`, and `write_at_most_every` need some explanation. These all control when queued measurements will be sent to the server. If the time since the last send is below `write_at_most_every`, then no data will be sent regardless of the number of queued points. This is to keep an app that generates many points from calling the server very frequently. If the time since the last send is above `write_at_least_every`, then points will be sent to the server, regardless of the number of queued points. This is to ensure that all points will be sent to the server in a timely manner. If neither of those apply, and the number of queued measurements is over `write_batch_size`, then the points will be sent to the server, otherwise, they will not.
+The three write configuration settings, `write_batch_size`, `write_at_least_every`, and `write_at_most_every` need some explanation. These all control when queued measurements will be sent to the server. If the time since the last send is below `write_at_most_every`, then no data will be sent regardless of the number of queued points. This is to keep an app that generates many measurements from calling the server very frequently. If the time since the last send is above `write_at_least_every`, then measurements will be sent to the server, regardless of the number of queued points. This is to ensure that all points will be sent to the server in a timely manner. If neither of those apply, and the number of queued measurements is over `write_batch_size`, then the points will be sent to the server, otherwise, they will not.
 
 ### Batching 
 
